@@ -2,7 +2,7 @@
 
 <img src="./logo.png" alt="WebAlph Logo" width="180" />
 
-# WebAlph ⚡
+# WebAlph
 
 **Build tiny, blazingly fast desktop apps with web frontends and pure Alpha backends.**  
 *A lightweight, native alternative to Tauri & Electron for the Alpha programming language.*
