@@ -204,7 +204,7 @@ alpha run src/main.alpha
 
 ## 📚 Documentation
 
-- 🇷🇺 **[Пошаговое руководство с нуля (Russian)](docs/STEP_BY_STEP_GUIDE.md)** — Подробнейший гайд от создания первого окна до готового приложения.
+- 🇷🇺 **[Пошаговое руководство с нуля (Russian)](docs/STEP_BY_STEP_GUIDE_RU.md)** — Подробнейший гайд от создания первого окна до готового приложения.
 - 🇬🇧 **[Step-by-Step Guide from Scratch (English)](docs/STEP_BY_STEP_GUIDE_EN.md)** — A beginner-friendly tutorial explaining everything step-by-step.
 - 📘 **[API Reference](docs/API.md)** — Method signatures, parameter descriptions, and isolated examples.
 - 🎨 **[Frontend Developer Guide](docs/FRONTEND_GUIDE.md)** — React, Vue, Svelte integration & TypeScript typings.
