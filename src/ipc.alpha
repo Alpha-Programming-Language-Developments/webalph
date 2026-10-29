@@ -1,0 +1,48 @@
+// WebAlph: IPC & RPC Dispatcher Module
+// Processes JSON-RPC requests from window.webalph.invoke and window.webalph.emit
+
+import Core/Basic.alpha
+import Core/Json.alpha
+import events.alpha
+
+var rpc_commands: map<string, something> = map.new()
+
+function register_rpc(name: string, handler: something) [public, nothing] {
+    rpc_commands.insert(name, handler)
+}
+
+function has_rpc(name: string) [public, boolean] {
+    return rpc_commands.contains(name)
+}
+
+function dispatch_rpc(raw_msg: string) [public, string] {
+    var parsed: map<string, something> = json.parse(raw_msg)
+    var msg_type: string = parsed["type"]
+
+    if msg_type == "invoke" {
+        var cmd_name: string = parsed["cmd"]
+        var id: something = parsed["id"]
+        var args: something = parsed["args"]
+
+        if rpc_commands.contains(cmd_name) {
+            var handler: something = rpc_commands[cmd_name]
+            var res: something = handler(args)
+            var res_json: string = json.stringify(res)
+            return format("window.__webalph_resolve({}, {}, false);", id, res_json)
+        } else {
+            var err_msg: string = format("WebAlph: Command '{}' is not registered in backend", cmd_name)
+            var err_json: string = json.stringify(err_msg)
+            return format("window.__webalph_resolve({}, {}, true);", id, err_json)
+        }
+    }
+
+    if msg_type == "emit" {
+        var event_name: string = parsed["event"]
+        var payload: something = parsed["payload"]
+
+        trigger_event(event_name, payload)
+        return ""
+    }
+
+    return ""
+}

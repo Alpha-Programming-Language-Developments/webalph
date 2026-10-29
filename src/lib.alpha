@@ -1,0 +1,15 @@
+// WebAlph Library: Root Module
+// Tauri-like native desktop GUI framework for the Alpha programming language.
+
+import Core/Basic.alpha
+import Core/Json.alpha
+import Core/Webview.alpha
+import window.alpha
+import events.alpha
+import ipc.alpha
+import app.alpha
+
+// Helper constructor for quick application bootstrapping
+function create_app(title: string, width: int, height: int, url: string) [public, App] {
+    return App.new(title, width, height, url)
+}

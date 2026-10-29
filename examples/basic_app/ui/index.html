@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebAlph Desktop</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>WebAlph</h1>
+      <span class="badge">Pure Alpha Backend</span>
+    </div>
+    <div style="font-size: 13px; color: #8b949e;">Tauri analog for Alpha</div>
+  </header>
+
+  <main>
+    <!-- Card 1: RPC Commands -->
+    <div class="card">
+      <h2>⚡ Invoke Alpha Backend Commands</h2>
+      
+      <div class="row">
+        <input type="text" id="nameInput" placeholder="Enter your name" value="Alpha Developer" />
+        <button id="btnGreet">Greet</button>
+      </div>
+
+      <div class="row">
+        <input type="number" id="numA" placeholder="Number A" value="40" style="max-width: 100px;" />
+        <span style="font-size: 16px; font-weight: bold;">+</span>
+        <input type="number" id="numB" placeholder="Number B" value="2" style="max-width: 100px;" />
+        <button id="btnCalc">Calculate</button>
+      </div>
+
+      <div class="result-box" id="resultBox">Result will appear here...</div>
+    </div>
+
+    <!-- Card 2: System info & Events -->
+    <div class="card">
+      <h2>🖥️ System Info & Bi-directional Events</h2>
+      
+      <div class="row">
+        <button id="btnSysInfo" class="secondary">Fetch System Info</button>
+        <button id="btnEmit" class="secondary">Emit 'ping' to Alpha</button>
+      </div>
+
+      <div class="log-box" id="logBox">
+        <div class="log-item">
+          <span class="log-time">[Init]</span>
+          <span class="log-msg">WebAlph WebView initialized and ready.</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>WebView2 Engine</span>
+    <span id="statusIndicator">Status: Connected</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

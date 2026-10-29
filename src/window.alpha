@@ -1,0 +1,55 @@
+// WebAlph: Window Configuration Module
+// Defines configuration properties for the native desktop window.
+
+import Core/Basic.alpha
+
+structure WindowConfig {
+    title: string,
+    width: int,
+    height: int,
+    resizable: boolean,
+    url: string,
+    html: string,
+attach {
+    function new(title: string, width: int, height: int, url: string) [static, public, WindowConfig] {
+        return make this {
+            title: title,
+            width: width,
+            height: height,
+            resizable: true,
+            url: url,
+            html: ""
+        }
+    }
+
+    function with_size(width: int, height: int) [nonstatic, public, WindowConfig] {
+        this.width = width
+        this.height = height
+        return this
+    }
+
+    function with_resizable(resizable: boolean) [nonstatic, public, WindowConfig] {
+        this.resizable = resizable
+        return this
+    }
+
+    function with_html(html_content: string) [nonstatic, public, WindowConfig] {
+        this.html = html_content
+        return this
+    }
+
+    function to_map() [nonstatic, public, map<string, something>] {
+        var opts: map<string, something> = map.new()
+        opts.insert("title", this.title)
+        opts.insert("width", this.width)
+        opts.insert("height", this.height)
+        opts.insert("resizable", this.resizable)
+        if this.html != "" {
+            opts.insert("html", this.html)
+        } else {
+            opts.insert("url", this.url)
+        }
+        return opts
+    }
+}
+}

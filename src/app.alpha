@@ -1,0 +1,53 @@
+// WebAlph: Application Lifecycle & Controller Module
+// High-level App structure binding Window, IPC, and Event Bus.
+
+import Core/Basic.alpha
+import Core/Webview.alpha
+import window.alpha
+import events.alpha
+import ipc.alpha
+
+structure App {
+    window: WindowConfig,
+attach {
+    function new(title: string, width: int, height: int, url: string) [static, public, App] {
+        var win: WindowConfig = WindowConfig.new(title, width, height, url)
+        return make this {
+            window: win
+        }
+    }
+
+    function with_html(html_content: string) [nonstatic, public, App] {
+        this.window.html = html_content
+        return this
+    }
+
+    function with_resizable(resizable: boolean) [nonstatic, public, App] {
+        this.window.resizable = resizable
+        return this
+    }
+
+    function command(name: string, handler: something) [nonstatic, public, nothing] {
+        register_rpc(name, handler)
+    }
+
+    function listen(event: string, handler: something) [nonstatic, public, nothing] {
+        on_event(event, handler)
+    }
+
+    function emit(event: string, payload: something) [nonstatic, public, nothing] {
+        emit_event(event, payload)
+    }
+
+    function eval(script: string) [nonstatic, public, nothing] {
+        Webview.eval(script)
+    }
+
+    function run() [nonstatic, public, nothing] {
+        var opts: map<string, something> = this.window.to_map()
+        Webview.open(opts)
+        Webview.on_message(dispatch_rpc)
+        Webview.run()
+    }
+}
+}
