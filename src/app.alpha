@@ -22,6 +22,12 @@ attach {
         return this
     }
 
+    function with_url(url: string) [nonstatic, public, App] {
+        this.window.url = url
+        this.window.html = ""
+        return this
+    }
+
     function with_resizable(resizable: boolean) [nonstatic, public, App] {
         this.window.resizable = resizable
         return this

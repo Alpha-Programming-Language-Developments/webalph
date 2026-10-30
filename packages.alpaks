@@ -1,3 +1,4 @@
 # packages.alpaks
 # Define remote web packages here:
 # "alias" = import web::"url"
+# "webalph" = import "https://github.com/Alpha-Programming-Language-Developments/webalph/blob/main/src/lib.alpha"

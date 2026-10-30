@@ -38,6 +38,12 @@ attach {
         return this
     }
 
+    function with_url(url: string) [nonstatic, public, WindowConfig] {
+        this.url = url
+        this.html = ""
+        return this
+    }
+
     function to_map() [nonstatic, public, map<string, something>] {
         var opts: map<string, something> = map.new()
         opts.insert("title", this.title)

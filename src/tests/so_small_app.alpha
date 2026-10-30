@@ -1,0 +1,7 @@
+import webalph
+
+#test test() {
+    var app: App = App.new("Мое Первое Окно", 700, 650, "https://getsparku.app/")
+
+    app.run()
+}

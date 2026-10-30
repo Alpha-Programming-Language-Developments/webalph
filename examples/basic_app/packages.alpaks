@@ -1,2 +1,2 @@
 # packages.alpaks
-"webalph" = import "D:\AlphaProjects\webalph\src\lib.alpha"
+"webalph" = import "https://github.com/Alpha-Programming-Language-Developments/webalph/blob/main/src/lib.alpha"

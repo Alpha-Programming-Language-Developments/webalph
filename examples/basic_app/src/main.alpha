@@ -1,39 +1,39 @@
 // ============================================================================
-// WebAlph: Пример простого десктопного приложения
+// WebAlph: Simple Desktop Application Example
 // ============================================================================
-// Этот пример показывает 3 главные вещи:
-// 1. Как открыть окно приложения (App.new + app.run)
-// 2. Как обрабатывать команды из JavaScript (app.command + invoke)
-// 3. Как обмениваться событиями в реальном времени (app.listen + app.emit)
+// This example demonstrates 3 core concepts:
+// 1. Opening an application window (App.new + app.run)
+// 2. Handling RPC commands from JavaScript (app.command + invoke)
+// 3. Real-time bi-directional event communication (app.listen + emit_event)
 // ============================================================================
 
 import Core/Basic.alpha
 import Core/Json.alpha
 import Core/Env.alpha
 import Core/Time.alpha
-import "../../src/lib.alpha"
+import webalph
 
 // ----------------------------------------------------------------------------
-// 1. Обработчики RPC-команд (вызываются из JS через window.webalph.invoke)
+// 1. RPC Command Handlers (invoked from JS via window.webalph.invoke)
 // ----------------------------------------------------------------------------
 
-// Команда 1: Приветствие по имени (возвращает строку)
-// Вызов из JS: await window.webalph.invoke("greet", { name: "Иван" })
+// Command 1: Greet by name (returns string)
+// Invocation from JS: await window.webalph.invoke("greet", { name: "John" })
 function handle_greet(args: map<string, something>) [here, string] {
     var name: string = args["name"]
-    return format("Привет, {}! Это сообщение сгенерировано на бэкенде Alpha.", name)
+    return format("Hello, {}! This message was generated on the Alpha backend.", name)
 }
 
-// Команда 2: Сложение двух чисел на бэкенде (возвращает число)
-// Вызов из JS: await window.webalph.invoke("calculate", { a: 10, b: 20 })
+// Command 2: Add two numbers on the backend (returns integer)
+// Invocation from JS: await window.webalph.invoke("calculate", { a: 10, b: 20 })
 function handle_calculate(args: map<string, something>) [here, int] {
     var a: int = args["a"]
     var b: int = args["b"]
     return a + b
 }
 
-// Команда 3: Получение системной информации (возвращает словарь/JSON)
-// Вызов из JS: await window.webalph.invoke("get_system_info", {})
+// Command 3: Retrieve system information (returns map/JSON object)
+// Invocation from JS: await window.webalph.invoke("get_system_info", {})
 function handle_system_info(args: map<string, something>) [here, map<string, something>] {
     var info: map<string, something> = map.new()
     info.insert("platform", "Alpha Native (WebView2 / WRY)")
@@ -44,40 +44,40 @@ function handle_system_info(args: map<string, something>) [here, map<string, som
 }
 
 // ----------------------------------------------------------------------------
-// 2. Обработчик события (вызывается из JS через window.webalph.emit)
+// 2. Event Handler (triggered from JS via window.webalph.emit)
 // ----------------------------------------------------------------------------
 function handle_ping(payload: something) [here, nothing] {
-    printf("[Alpha] Получено событие 'ping' из веб-интерфейса: {}\n", json.stringify(payload))
+    printf("[Alpha] Received 'ping' event from frontend: {}\n", json.stringify(payload))
 
-    // Формируем ответное событие "pong" для фронтенда
+    // Prepare response "pong" event payload for frontend
     var response: map<string, something> = map.new()
-    response.insert("message", "Ответный сигнал 'pong' от Alpha!")
+    response.insert("message", "Pong response signal from Alpha!")
     response.insert("server_time", time.now_ms())
 
-    // Отправляем событие во фронтенд (JS поймает его через window.webalph.listen("pong", ...))
+    // Emit event to frontend (caught in JS via window.webalph.listen("pong", ...))
     emit_event("pong", response)
 }
 
 // ----------------------------------------------------------------------------
-// 3. Точка входа: создание и запуск приложения
+// 3. Entry Point: Application setup and launch
 // ----------------------------------------------------------------------------
 function main() [here, nothing] {
-    printf("[WebAlph] Запуск десктопного приложения...\n")
+    printf("[WebAlph] Starting desktop application...\n")
 
-    // Шаг 1: Настраиваем окно (Заголовок, Ширина, Высота, Путь к HTML файлу)
+    // Step 1: Configure window (Title, Width, Height, Path to HTML file)
     var app: App = App.new("WebAlph Demo App", 980, 700, "ui/index.html")
 
-    // Шаг 2: Регистрируем команды, доступные для JavaScript
+    // Step 2: Register RPC commands callable from JavaScript
     app.command("greet", handle_greet)
     app.command("calculate", handle_calculate)
     app.command("get_system_info", handle_system_info)
 
-    // Шаг 3: Регистрируем слушатель входящих событий из JavaScript
+    // Step 3: Register event listener for incoming frontend events
     app.listen("ping", handle_ping)
 
-    // Шаг 4: Открываем окно и запускаем приложение!
-    // (Код ниже app.run() выполнится только когда окно будет закрыто)
+    // Step 4: Open window and run event loop!
+    // (Code after app.run() executes only when the window is closed)
     app.run()
 
-    printf("[WebAlph] Окно закрыто. Приложение завершило работу.\n")
+    printf("[WebAlph] Window closed. Application terminated.\n")
 }
