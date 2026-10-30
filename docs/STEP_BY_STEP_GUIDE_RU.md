@@ -19,11 +19,14 @@ WebAlph устроен очень просто:
 
 Давайте создадим минимально возможное окно.
 
-Создайте файл `src/main.alpha`:
+Создайте проект командой `alpha here`
+Подключите библиотеку webalph в файле packages.alpaks:
+```alpaks
+"webalph" = import "https://github.com/Alpha-Programming-Language-Developments/webalph/blob/main/src/lib.alpha"
+```
 
 ```alpha
-import Core/Basic.alpha
-import "../../src/lib.alpha"
+import webalph
 
 function main() [here, nothing] {
     // 1. Создаем окно с заголовком, шириной 800px, высотой 600px
@@ -39,7 +42,7 @@ function main() [here, nothing] {
 
 Запустите:
 ```bash
-alpha run src/main.alpha
+alpha run
 ```
 **Что произошло?**
 - Функция `App.new(...)` настроила размеры и заголовок окна.
@@ -73,8 +76,7 @@ alpha run src/main.alpha
 
 В `src/main.alpha` просто передайте путь к файлу:
 ```alpha
-import Core/Basic.alpha
-import "../../src/lib.alpha"
+import webalph
 
 function main() [here, nothing] {
     // Четвертый аргумент - путь к вашему index.html
@@ -104,7 +106,7 @@ app.run()
 
 ```alpha
 import Core/Basic.alpha
-import "../../src/lib.alpha"
+import webalph
 
 // Функция, которая примет имя из JS и вернет приветствие
 function say_hello(args: map<string, something>) [here, string] {
@@ -238,7 +240,7 @@ window.webalph.listen("notification", (msg) => {
 ### `src/main.alpha`:
 ```alpha
 import Core/Basic.alpha
-import "../../src/lib.alpha"
+import webalph
 
 // Переменная состояния в Alpha
 var total_clicks: int = 0
@@ -263,7 +265,7 @@ function main() [here, nothing] {
 
 Запустите:
 ```bash
-alpha run src/main.alpha
+alpha run
 ```
 Поздравляем! Вы только что написали полноценное десктопное приложение с нативным окном, веб-интерфейсом и реактивным бэкендом на языке Alpha!
 

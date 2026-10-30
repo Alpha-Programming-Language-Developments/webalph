@@ -1,59 +1,67 @@
-# Step-by-Step Guide: Building Desktop Apps with WebAlph from Scratch
+# Step-by-Step Guide: Building a Desktop Application with WebAlph from Scratch
 
-This guide explains **WebAlph** in simple, beginner-friendly terms and walks you through creating a native desktop application step-by-step from zero.
+This guide explains the core concepts behind **WebAlph** in plain English—free of convoluted jargon—and shows you how to build a complete desktop application step by step.
 
 ---
 
-## What is WebAlph in Plain English?
+## What is WebAlph in Simple Terms?
 
-WebAlph is built around a straightforward concept:
-1. **Frontend (User Interface)** — A standard web page (HTML, CSS, JavaScript). This is where you design buttons, forms, tables, and graphs using your favorite tools.
-2. **Backend (Application Logic)** — Code written in the **Alpha** programming language. This is where you handle file system operations, heavy calculations, databases, and OS APIs.
-3. **Bridge (IPC)** — A lightweight communication channel that lets JavaScript in the browser call functions written in Alpha and receive the results asynchronously.
+WebAlph is built around a straightforward architecture:
+1. **Frontend (User Interface)** — A standard web page (HTML, CSS, JavaScript). This is where you design buttons, forms, tables, and graphics.
+2. **Backend (Application Logic)** — Code written in the **Alpha** programming language. This is where you handle files, system resources, databases, and heavy computations.
+3. **Bridge (IPC)** — A communication channel allowing JavaScript in the web view to invoke Alpha backend functions and receive responses.
 
-There is no heavy Chromium bundle — WebAlph relies on your operating system's built-in web engine (Microsoft Edge WebView2 on Windows, Apple WebKit on macOS, WebKitGTK on Linux).
+No heavy Electron overhead—WebAlph leverages the operating system's native web engine (WebView2 on Windows, WebKit on macOS/Linux).
 
 ---
 
 ## Step 1: The Simplest Window (5 Lines of Code)
 
-Let's start by creating the absolute minimal desktop window.
+Let's create the smallest possible working window.
 
-Create a file named `src/main.alpha`:
+Initialize a new project:
+```bash
+alpha here
+```
 
+Add the `webalph` library dependency to `packages.alpaks`:
+```alpaks
+"webalph" = import "https://github.com/Alpha-Programming-Language-Developments/webalph/blob/main/src/lib.alpha"
+```
+
+In `src/main.alpha`:
 ```alpha
-import Core/Basic.alpha
-import "../../src/lib.alpha"
+import webalph
 
 function main() [here, nothing] {
-    // 1. Create a 800x600 window
+    // 1. Create a window: title, width: 800px, height: 600px
     var app: App = App.new("My First Window", 800, 600, "")
 
-    // 2. Set inline HTML content directly
-    app.with_html("<html><body style='background:#181825; color:#cdd6f4; display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif;'><h1>Hello from Alpha! ⚡</h1></body></html>")
+    // 2. Supply inline HTML content
+    app.with_html("<html><body style='background:#222; color:#fff; display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif;'><h1>Hello from Alpha!</h1></body></html>")
 
-    // 3. Open the window and enter the event loop
+    // 3. Open the window and start the event loop
     app.run()
 }
 ```
 
-Run it:
+Run your application:
 ```bash
-alpha run src/main.alpha
+alpha run
 ```
 
 **What just happened?**
-- `App.new(...)` configured the title, initial dimensions, and target.
-- `.with_html(...)` injected inline HTML directly without needing external assets.
-- `app.run()` displayed a native operating system window running the webview.
+- `App.new(...)` configured the initial window dimensions and title.
+- `.with_html(...)` injected raw HTML markup into the web view.
+- `app.run()` spawned a genuine native desktop window rendering your page.
 
 ---
 
-## Step 2: Loading an HTML File or Dev Server
+## Step 2: Loading HTML Files or Live Websites
 
-In real projects, you will usually want to load external HTML/CSS/JS files or connect to a local frontend development server.
+In real-world applications, keeping your layout in separate files is much cleaner.
 
-### Option A: Loading a Local HTML File (`ui/index.html`)
+### Option A: Loading a Local File (`ui/index.html`)
 
 Create `ui/index.html`:
 ```html
@@ -61,56 +69,56 @@ Create `ui/index.html`:
 <html>
 <head>
   <style>
-    body { background: #11111b; color: #a6adc8; font-family: sans-serif; padding: 40px; }
-    h1 { color: #89b4fa; }
+    body { background: #1a1a1a; color: #eee; font-family: sans-serif; padding: 40px; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
   </style>
 </head>
 <body>
   <h1>My Desktop Application</h1>
-  <p>Loaded from a local HTML file!</p>
+  <p>Rendered from a local HTML file!</p>
 </body>
 </html>
 ```
 
-In `src/main.alpha`, pass the relative path as the fourth argument:
+In `src/main.alpha`, provide the relative path as the fourth argument:
 ```alpha
-import Core/Basic.alpha
-import "../../src/lib.alpha"
+import webalph
 
 function main() [here, nothing] {
-    // Load local HTML file
+    // Fourth argument: path to your index.html
     var app: App = App.new("WebAlph App", 900, 650, "ui/index.html")
     app.run()
 }
 ```
 
-### Option B: Connecting to Vite / React / Vue (Live Reload)
+### Option B: Loading React / Vue / Svelte (Vite Dev Server)
 
-If you are developing a modern frontend using Vite (`npm run dev` running on `http://localhost:5173`), pass the local URL:
+If you are developing your frontend with modern tooling like Vite, run your dev server (e.g., `npm run dev` running at `http://localhost:5173`) and point WebAlph to that address:
 
 ```alpha
-var app: App = App.new("React Desktop App", 1024, 768, "http://localhost:5173")
+var app: App = App.new("React App", 1000, 700, "http://localhost:5173")
 app.run()
 ```
-You get instant Hot Module Replacement (HMR) right inside your native desktop window!
+
+You get a full-featured desktop window with instant **Hot Module Replacement (HMR)**!
 
 ---
 
-## Step 3: How JavaScript Calls Alpha Functions (Commands / RPC)
+## Step 3: Calling Alpha Backend Functions from JavaScript (Commands / RPC)
 
-This is the core mechanic: how do you run Alpha backend code when a user clicks a button in the web UI?
+This is the core mechanic: how do you trigger backend Alpha code by clicking a button in HTML?
 
-### 1. In Alpha (Backend)
-Write a function that accepts `args: map<string, something>` and returns a value:
+### 1. On the Alpha Side (Backend)
+Write a standard function that takes `args: map<string, something>` and returns a value:
 
 ```alpha
 import Core/Basic.alpha
-import "../../src/lib.alpha"
+import webalph
 
-// Function that receives a name from JS and returns a greeting
+// Handler function receiving a name from JS and returning a greeting
 function say_hello(args: map<string, something>) [here, string] {
     var name: string = args["user_name"]
-    return format("Hello, {}! This message was generated in Alpha backend.", name)
+    return format("Hello, {}! I was executed in the Alpha backend!", name)
 }
 
 function main() [here, nothing] {
@@ -123,12 +131,12 @@ function main() [here, nothing] {
 }
 ```
 
-### 2. In HTML / JavaScript (Frontend)
-The `window.webalph` global bridge is injected automatically. Call your command using `invoke`:
+### 2. On the HTML/JS Side (Frontend)
+The `window.webalph` object is injected automatically. You invoke backend commands using `invoke`:
 
 ```html
 <!-- ui/index.html -->
-<input id="nameInput" value="Alex" />
+<input id="nameInput" value="Michael" />
 <button onclick="askAlpha()">Greet</button>
 <h2 id="resultText"></h2>
 
@@ -136,75 +144,75 @@ The `window.webalph` global bridge is injected automatically. Call your command 
   async function askAlpha() {
     const name = document.getElementById('nameInput').value;
     
-    // Call the Alpha command "greet" and await the Promise response
+    // Call the "greet" command and pass arguments as an object
     const answer = await window.webalph.invoke('greet', { user_name: name });
     
-    // Display result on screen
+    // Display the result
     document.getElementById('resultText').innerText = answer;
   }
 </script>
 ```
 
-**Step-by-step lifecycle:**
+**Step-by-Step Breakdown:**
 1. The user clicks the button.
-2. JavaScript calls `window.webalph.invoke('greet', { user_name: 'Alex' })`.
-3. The IPC bridge serializes the payload to JSON and dispatches it to Alpha.
-4. Alpha calls `say_hello`, extracts `args["user_name"]`, and formats the response.
-5. The result resolves the JavaScript `Promise`, updating the UI.
+2. JavaScript calls `window.webalph.invoke('greet', { user_name: 'Michael' })`.
+3. The IPC layer dispatches the request to the Alpha backend.
+4. Alpha calls `say_hello`, reads `args["user_name"]`, and formats the string.
+5. The result returns asynchronously to JavaScript and updates the DOM.
 
 ---
 
-## Step 4: Real-time Bi-directional Events (`emit` & `listen`)
+## Step 4: Bidirectional Events (`emit` and `listen`)
 
-What is the difference between Commands and Events?
-- **Commands (`invoke`)** — Request-Response pattern (Ask for data -> Wait for result).
-- **Events (`emit`)** — Fire-and-forget notifications (Send signal without blocking, broadcast updates, streaming progress).
+How do events differ from commands?
+- **Commands (`invoke`)** — Request/Response model (query -> wait for return value).
+- **Events (`emit`)** — Fire-and-forget notifications ("file downloaded", "upload progress 50%").
 
 ### Sending an Event from JavaScript to Alpha:
 
 **In JavaScript:**
 ```javascript
-// Emit an event named "save_clicked"
-window.webalph.emit("save_clicked", { document_id: 42 });
+// Emit the "save_clicked" event
+window.webalph.emit("save_clicked", { file_id: 123 });
 ```
 
 **In Alpha:**
 ```alpha
 function on_save(payload: something) [here, nothing] {
-    printf("[Alpha] User clicked save! Payload: {}\n", payload)
+    printf("User clicked save! Data: {}\n", payload)
 }
 
 function main() [here, nothing] {
     var app: App = App.new("Events Demo", 800, 600, "ui/index.html")
     
-    // Listen for "save_clicked" event
+    // Listen for the "save_clicked" event
     app.listen("save_clicked", on_save)
     
     app.run()
 }
 ```
 
-### Streaming an Event from Alpha to JavaScript:
+### Sending an Event from Alpha to JavaScript:
 
 **In Alpha:**
 ```alpha
-// Broadcast event to webview
-app.emit("status_update", "File processing finished successfully!")
+// Emit an event to the frontend
+app.emit("notification", "File saved to disk successfully!")
 ```
 
 **In JavaScript:**
 ```javascript
-// Subscribe to event emitted by Alpha
-window.webalph.listen("status_update", (message) => {
-    console.log("Notification from Alpha:", message);
+// Subscribe to backend events
+window.webalph.listen("notification", (msg) => {
+    alert("Message from Alpha: " + msg);
 });
 ```
 
 ---
 
-## Step 5: Complete "Clicker" Mini-Project
+## Step 5: Complete Example — Click Counter
 
-Let's assemble everything into a self-contained, working project.
+Let's tie everything together into a self-contained mini project.
 
 ### `ui/index.html`:
 ```html
@@ -212,24 +220,24 @@ Let's assemble everything into a self-contained, working project.
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Alpha Clicker</title>
+  <title>Clicker</title>
   <style>
-    body { background: #181825; color: #cdd6f4; font-family: sans-serif; text-align: center; padding-top: 50px; }
-    button { background: #89b4fa; color: #11111b; border: none; padding: 14px 28px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: transform 0.1s; }
-    button:hover { transform: scale(1.05); }
-    h1 { font-size: 56px; margin: 20px 0; color: #a6e3a1; }
+    body { background: #121212; color: #fff; font-family: sans-serif; text-align: center; padding-top: 50px; }
+    button { background: #007acc; color: white; border: none; padding: 15px 30px; font-size: 20px; border-radius: 8px; cursor: pointer; }
+    button:hover { background: #005999; }
+    h1 { font-size: 48px; }
   </style>
 </head>
 <body>
-  <p>State stored and incremented in Alpha backend:</p>
-  <h1 id="counterView">0</h1>
-  <button onclick="addClick()">Click (+1)</button>
+  <p>Click counter managed by the Alpha backend:</p>
+  <h1 id="countView">0</h1>
+  <button onclick="increment()">Click Me (+1)</button>
 
   <script>
-    async function addClick() {
-      // Invoke command on Alpha backend
-      const count = await window.webalph.invoke('increment', {});
-      document.getElementById('counterView').innerText = count;
+    async function increment() {
+      // Invoke the Alpha backend command
+      const newCount = await window.webalph.invoke('add_click', {});
+      document.getElementById('countView').innerText = newCount;
     }
   </script>
 </body>
@@ -239,47 +247,47 @@ Let's assemble everything into a self-contained, working project.
 ### `src/main.alpha`:
 ```alpha
 import Core/Basic.alpha
-import "../../src/lib.alpha"
+import webalph
 
-// State stored on the Alpha backend
+// Application state stored in Alpha
 var total_clicks: int = 0
 
-// Handler for the "increment" command
-function handle_increment(args: map<string, something>) [here, int] {
+// Command handler
+function handle_add_click(args: map<string, something>) [here, int] {
     total_clicks = total_clicks + 1
-    printf("[Alpha] Total clicks count: {}\n", total_clicks)
+    printf("[Alpha] Current click count: {}\n", total_clicks)
     return total_clicks
 }
 
 function main() [here, nothing] {
-    var app: App = App.new("Alpha Clicker", 500, 420, "ui/index.html")
+    var app: App = App.new("Alpha Clicker", 500, 400, "ui/index.html")
 
-    // Register RPC command
-    app.command("increment", handle_increment)
+    // Register the command
+    app.command("add_click", handle_add_click)
 
-    // Launch window
+    // Launch the window
     app.run()
 }
 ```
 
-Run the application:
+Run the app:
 ```bash
-alpha run src/main.alpha
+alpha run
 ```
 
-You now have a fully functional native desktop app powered by a web frontend and an Alpha backend!
+Congratulations! You have just built a native desktop application with a web-based UI and a reactive backend written in Alpha!
 
 ---
 
-## Cheat Sheet Summary
+## Quick API Reference
 
-| Goal | Alpha Function | JavaScript Method |
+| Action | Alpha Function | JavaScript Function |
 |---|---|---|
 | **Create window** | `App.new(title, width, height, path)` | — |
 | **Set HTML string** | `app.with_html(html_str)` | — |
 | **Disable resizing** | `app.with_resizable(false)` | — |
-| **Run event loop** | `app.run()` | — |
-| **Register RPC command** | `app.command(name, handler)` | `window.webalph.invoke(name, args)` |
+| **Run application** | `app.run()` | — |
+| **Register command** | `app.command(name, handler)` | `window.webalph.invoke(name, args)` |
 | **Emit event** | `app.emit(event, data)` | `window.webalph.emit(event, data)` |
-| **Listen to event** | `app.listen(event, handler)` | `window.webalph.listen(event, cb)` |
-| **Evaluate JavaScript** | `app.eval("console.log('hi')")` | — |
+| **Listen to event** | `app.listen(event, handler)` | `window.webalph.listen(event, callback)` |
+| **Execute JS from Alpha** | `app.eval("alert('Hello')")` | — |
