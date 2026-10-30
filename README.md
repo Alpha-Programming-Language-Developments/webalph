@@ -53,7 +53,7 @@ Create a minimal Alpha script in 5 lines of code:
 
 ```alpha
 import Core/Basic.alpha
-import "../../src/lib.alpha"
+import web
 
 function main() [here, nothing] {
     // 1. Create a 800x600 window
@@ -80,7 +80,7 @@ alpha run src/main.alpha
 ```alpha
 import Core/Basic.alpha
 import Core/Json.alpha
-import "../../src/lib.alpha"
+import webalph
 
 // Define a command callable from JavaScript
 function handle_add(args: map<string, something>) [here, int] {
