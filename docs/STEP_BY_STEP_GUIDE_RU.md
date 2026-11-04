@@ -19,16 +19,22 @@ WebAlph устроен очень просто:
 
 Давайте создадим минимально возможное окно.
 
-Создайте проект командой `alpha here`
-Подключите библиотеку webalph в файле packages.alpaks:
+Создайте проект командой:
+```bash
+alpha here
+```
+
+Подключите библиотеку webalph в файле `packages.alpaks`:
 ```alpaks
 "webalph" = import "https://github.com/Alpha-Programming-Language-Developments/webalph/blob/main/src/lib.alpha"
 ```
 
+В `src/main.alpha`:
 ```alpha
+const var std = @import("std")
 import webalph
 
-function main() [here, nothing] {
+function main() [public, nothing] {
     // 1. Создаем окно с заголовком, шириной 800px, высотой 600px
     var app: App = App.new("Мое Первое Окно", 800, 600, "")
 
@@ -69,31 +75,33 @@ alpha run
 </head>
 <body>
   <h1>Мое Десктопное Приложение</h1>
-  <p>Это локальный HTML файл!</p>
+  <p>Отображается из локального HTML файла!</p>
 </body>
 </html>
 ```
 
-В `src/main.alpha` просто передайте путь к файлу:
+В `src/main.alpha` укажите относительный путь 4-м аргументом:
 ```alpha
+const var std = @import("std")
 import webalph
 
-function main() [here, nothing] {
-    // Четвертый аргумент - путь к вашему index.html
+function main() [public, nothing] {
+    // Четвертый аргумент: путь к вашему index.html
     var app: App = App.new("WebAlph App", 900, 650, "ui/index.html")
     app.run()
 }
 ```
 
-### Вариант Б: Загрузка React/Vue (Vite Dev Server)
+### Вариант Б: Загрузка React / Vue / Svelte (Vite Dev Server)
 
-Если вы разрабатываете фронтенд на React или Vue через Vite, запустите `npm run dev` (например, на `http://localhost:5173`) и укажите адрес сервера:
+Если вы разрабатываете фронтенд на Vite, запустите dev-сервер (например `npm run dev` на `http://localhost:5173`) и укажите адрес в WebAlph:
 
 ```alpha
 var app: App = App.new("React App", 1000, 700, "http://localhost:5173")
 app.run()
 ```
-Вы получите полноценное окно приложения с мгновенным обновлением интерфейса (Hot Reload)!
+
+Вы получите мгновенное обновление верстки (Hot Module Replacement, HMR) прямо в окне программы!
 
 ---
 
@@ -105,16 +113,16 @@ app.run()
 Пишем обычную функцию, которая принимает аргументы `args: map<string, something>` и возвращает результат:
 
 ```alpha
-import Core/Basic.alpha
+const var std = @import("std")
 import webalph
 
 // Функция, которая примет имя из JS и вернет приветствие
 function say_hello(args: map<string, something>) [here, string] {
     var name: string = args["user_name"]
-    return format("Привет, {}! Я выполнен в бэкенде Alpha!", name)
+    return std.format("Привет, {}! Я выполнен в бэкенде Alpha!", name)
 }
 
-function main() [here, nothing] {
+function main() [public, nothing] {
     var app: App = App.new("RPC Demo", 800, 600, "ui/index.html")
 
     // Регистрируем команду под именем "greet"
@@ -140,26 +148,26 @@ function main() [here, nothing] {
     // Вызываем команду "greet", передавая объект с аргументами
     const answer = await window.webalph.invoke('greet', { user_name: name });
     
-    // Выводим результат
+    // Отображаем результат
     document.getElementById('resultText').innerText = answer;
   }
 </script>
 ```
 
-**Как это работает шаг за шагом:**
-1. Пользователь нажал кнопку.
-2. JS вызвал `window.webalph.invoke('greet', { user_name: 'Михаил' })`.
-3. Запрос улетел в Alpha бэкенд.
-4. Alpha вызвала функцию `say_hello`, достала `args["user_name"]` и склеила строку.
-5. Результат вернулся в JavaScript и отобразился на экране.
+**Что происходит по шагам:**
+1. Пользователь нажимает на кнопку.
+2. JS вызывает `window.webalph.invoke('greet', { user_name: 'Михаил' })`.
+3. IPC-мост передает это в бэкенд на Alpha.
+4. Alpha запускает `say_hello`, считывает `args["user_name"]` и форматирует строку.
+5. Результат асинхронно возвращается в JS и отображается на странице.
 
 ---
 
-## Шаг 4: Двусторонние события (Events: `emit` и `listen`)
+## Шаг 4: Двусторонние события (`emit` и `listen`)
 
 Чем события отличаются от команд?
-- **Команда (`invoke`)** — это «вопрос-ответ» (запросил -> дождался ответа).
-- **Событие (`emit`)** — это уведомление без ожидания ответа («что-то произошло», «прогресс загрузки 50%»).
+- **Команды (`invoke`)** — это вопрос-ответ (спросили -> дождались ответа).
+- **События (`emit`)** — это уведомления («файл скачан», «прогресс 50%»).
 
 ### Отправка события из JavaScript в Alpha:
 
@@ -172,10 +180,10 @@ window.webalph.emit("save_clicked", { file_id: 123 });
 **В Alpha:**
 ```alpha
 function on_save(payload: something) [here, nothing] {
-    printf("Пользователь нажал сохранить! Данные: {}\n", payload)
+    std.printf("Пользователь нажал сохранить! Данные: {}\n", payload)
 }
 
-function main() [here, nothing] {
+function main() [public, nothing] {
     var app: App = App.new("Events Demo", 800, 600, "ui/index.html")
     
     // Слушаем событие "save_clicked"
@@ -195,7 +203,7 @@ app.emit("notification", "Файл успешно сохранен на диск
 
 **В JavaScript:**
 ```javascript
-// Подписываемся на событие из бэкенда
+// Подписываемся на события бэкенда
 window.webalph.listen("notification", (msg) => {
     alert("Сообщение от Alpha: " + msg);
 });
@@ -203,9 +211,9 @@ window.webalph.listen("notification", (msg) => {
 
 ---
 
-## Шаг 5: Законченный пример «Счетчик кликов»
+## Шаг 5: Полный пример — Счётчик кликов
 
-Давайте соберем всё вместе в один законченный мини-проект.
+Давайте соберем рабочий мини-проект воедино.
 
 ### `ui/index.html`:
 ```html
@@ -213,7 +221,7 @@ window.webalph.listen("notification", (msg) => {
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Кликер</title>
+  <title>Clicker</title>
   <style>
     body { background: #121212; color: #fff; font-family: sans-serif; text-align: center; padding-top: 50px; }
     button { background: #007acc; color: white; border: none; padding: 15px 30px; font-size: 20px; border-radius: 8px; cursor: pointer; }
@@ -222,13 +230,13 @@ window.webalph.listen("notification", (msg) => {
   </style>
 </head>
 <body>
-  <p>Счетчик кликов на Alpha бэкенде:</p>
+  <p>Счётчик кликов в бэкенде Alpha:</p>
   <h1 id="countView">0</h1>
   <button onclick="increment()">Кликнуть (+1)</button>
 
   <script>
     async function increment() {
-      // Вызываем Alpha бэкенд
+      // Вызываем команду бэкенда Alpha
       const newCount = await window.webalph.invoke('add_click', {});
       document.getElementById('countView').innerText = newCount;
     }
@@ -239,7 +247,7 @@ window.webalph.listen("notification", (msg) => {
 
 ### `src/main.alpha`:
 ```alpha
-import Core/Basic.alpha
+const var std = @import("std")
 import webalph
 
 // Переменная состояния в Alpha
@@ -248,11 +256,11 @@ var total_clicks: int = 0
 // Обработчик команды
 function handle_add_click(args: map<string, something>) [here, int] {
     total_clicks = total_clicks + 1
-    printf("[Alpha] Текущее число кликов: {}\n", total_clicks)
+    std.printf("[Alpha] Текущее число кликов: {}\n", total_clicks)
     return total_clicks
 }
 
-function main() [here, nothing] {
+function main() [public, nothing] {
     var app: App = App.new("Alpha Clicker", 500, 400, "ui/index.html")
 
     // Регистрируем команду
@@ -273,13 +281,13 @@ alpha run
 
 ## Сводная таблица функций
 
-| Что нужно сделать | Функция на Alpha | Функция в JavaScript |
+| Действие | Функция в Alpha | Функция в JavaScript |
 |---|---|---|
 | **Создать окно** | `App.new(title, width, height, path)` | — |
 | **Задать HTML строкой** | `app.with_html(html_str)` | — |
 | **Запретить ресайз** | `app.with_resizable(false)` | — |
 | **Запустить окно** | `app.run()` | — |
 | **Зарегистрировать команду** | `app.command(name, handler)` | `window.webalph.invoke(name, args)` |
-| **Послать событие** | `app.emit(event, data)` | `window.webalph.emit(event, data)` |
-| **Слушать событие** | `app.listen(event, handler)` | `window.webalph.listen(event, cb)` |
-| **Выполнить JS из Alpha** | `app.eval("alert('Привет')")` | — |
+| **Отправить событие** | `app.emit(event, data)` | `window.webalph.emit(event, data)` |
+| **Слушать событие** | `app.listen(event, handler)` | `window.webalph.listen(event, callback)` |
+| **Выполнить JS из Alpha** | `app.eval("alert('Hello')")` | — |

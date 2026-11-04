@@ -31,9 +31,10 @@ Add the `webalph` library dependency to `packages.alpaks`:
 
 In `src/main.alpha`:
 ```alpha
+const var std = @import("std")
 import webalph
 
-function main() [here, nothing] {
+function main() [public, nothing] {
     // 1. Create a window: title, width: 800px, height: 600px
     var app: App = App.new("My First Window", 800, 600, "")
 
@@ -82,9 +83,10 @@ Create `ui/index.html`:
 
 In `src/main.alpha`, provide the relative path as the fourth argument:
 ```alpha
+const var std = @import("std")
 import webalph
 
-function main() [here, nothing] {
+function main() [public, nothing] {
     // Fourth argument: path to your index.html
     var app: App = App.new("WebAlph App", 900, 650, "ui/index.html")
     app.run()
@@ -112,16 +114,16 @@ This is the core mechanic: how do you trigger backend Alpha code by clicking a b
 Write a standard function that takes `args: map<string, something>` and returns a value:
 
 ```alpha
-import Core/Basic.alpha
+const var std = @import("std")
 import webalph
 
 // Handler function receiving a name from JS and returning a greeting
 function say_hello(args: map<string, something>) [here, string] {
     var name: string = args["user_name"]
-    return format("Hello, {}! I was executed in the Alpha backend!", name)
+    return std.format("Hello, {}! I was executed in the Alpha backend!", name)
 }
 
-function main() [here, nothing] {
+function main() [public, nothing] {
     var app: App = App.new("RPC Demo", 800, 600, "ui/index.html")
 
     // Register command named "greet"
@@ -179,10 +181,10 @@ window.webalph.emit("save_clicked", { file_id: 123 });
 **In Alpha:**
 ```alpha
 function on_save(payload: something) [here, nothing] {
-    printf("User clicked save! Data: {}\n", payload)
+    std.printf("User clicked save! Data: {}\n", payload)
 }
 
-function main() [here, nothing] {
+function main() [public, nothing] {
     var app: App = App.new("Events Demo", 800, 600, "ui/index.html")
     
     // Listen for the "save_clicked" event
@@ -246,7 +248,7 @@ Let's tie everything together into a self-contained mini project.
 
 ### `src/main.alpha`:
 ```alpha
-import Core/Basic.alpha
+const var std = @import("std")
 import webalph
 
 // Application state stored in Alpha
@@ -255,11 +257,11 @@ var total_clicks: int = 0
 // Command handler
 function handle_add_click(args: map<string, something>) [here, int] {
     total_clicks = total_clicks + 1
-    printf("[Alpha] Current click count: {}\n", total_clicks)
+    std.printf("[Alpha] Current click count: {}\n", total_clicks)
     return total_clicks
 }
 
-function main() [here, nothing] {
+function main() [public, nothing] {
     var app: App = App.new("Alpha Clicker", 500, 400, "ui/index.html")
 
     // Register the command

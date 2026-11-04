@@ -1,9 +1,9 @@
 // WebAlph: Window Configuration Module
 // Defines configuration properties for the native desktop window.
 
-import Core/Basic.alpha
+const var std = @import("std")
 
-structure WindowConfig {
+public structure WindowConfig {
     title: string,
     width: int,
     height: int,
@@ -20,6 +20,11 @@ attach {
             url: url,
             html: ""
         }
+    }
+
+    function with_title(title: string) [nonstatic, public, WindowConfig] {
+        this.title = title
+        return this
     }
 
     function with_size(width: int, height: int) [nonstatic, public, WindowConfig] {

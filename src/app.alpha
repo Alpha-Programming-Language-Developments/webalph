@@ -1,13 +1,12 @@
 // WebAlph: Application Lifecycle & Controller Module
 // High-level App structure binding Window, IPC, and Event Bus.
 
-import Core/Basic.alpha
-import Core/Webview.alpha
+const var std = @import("std")
 import window.alpha
 import events.alpha
 import ipc.alpha
 
-structure App {
+public structure App {
     window: WindowConfig,
 attach {
     function new(title: string, width: int, height: int, url: string) [static, public, App] {
@@ -15,6 +14,17 @@ attach {
         return make this {
             window: win
         }
+    }
+
+    function with_title(title: string) [nonstatic, public, App] {
+        this.window.title = title
+        return this
+    }
+
+    function with_size(width: int, height: int) [nonstatic, public, App] {
+        this.window.width = width
+        this.window.height = height
+        return this
     }
 
     function with_html(html_content: string) [nonstatic, public, App] {
@@ -33,27 +43,31 @@ attach {
         return this
     }
 
-    function command(name: string, handler: something) [nonstatic, public, nothing] {
+    function command(name: string, handler: something) [nonstatic, public, App] {
         register_rpc(name, handler)
+        return this
     }
 
-    function listen(event: string, handler: something) [nonstatic, public, nothing] {
+    function listen(event: string, handler: something) [nonstatic, public, App] {
         on_event(event, handler)
+        return this
     }
 
-    function emit(event: string, payload: something) [nonstatic, public, nothing] {
+    function emit(event: string, payload: something) [nonstatic, public, App] {
         emit_event(event, payload)
+        return this
     }
 
-    function eval(script: string) [nonstatic, public, nothing] {
-        Webview.eval(script)
+    function eval(script: string) [nonstatic, public, App] {
+        std.webview.eval(script)
+        return this
     }
 
     function run() [nonstatic, public, nothing] {
         var opts: map<string, something> = this.window.to_map()
-        Webview.open(opts)
-        Webview.on_message(dispatch_rpc)
-        Webview.run()
+        std.webview.open(opts)
+        std.webview.on_message(dispatch_rpc)
+        std.webview.run()
     }
 }
 }

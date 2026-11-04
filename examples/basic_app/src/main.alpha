@@ -7,10 +7,7 @@
 // 3. Real-time bi-directional event communication (app.listen + emit_event)
 // ============================================================================
 
-import Core/Basic.alpha
-import Core/Json.alpha
-import Core/Env.alpha
-import Core/Time.alpha
+const var std = @import("std")
 import webalph
 
 // ----------------------------------------------------------------------------
@@ -21,7 +18,7 @@ import webalph
 // Invocation from JS: await window.webalph.invoke("greet", { name: "John" })
 function handle_greet(args: map<string, something>) [here, string] {
     var name: string = args["name"]
-    return format("Hello, {}! This message was generated on the Alpha backend.", name)
+    return std.format("Hello, {}! This message was generated on the Alpha backend.", name)
 }
 
 // Command 2: Add two numbers on the backend (returns integer)
@@ -37,9 +34,9 @@ function handle_calculate(args: map<string, something>) [here, int] {
 function handle_system_info(args: map<string, something>) [here, map<string, something>] {
     var info: map<string, something> = map.new()
     info.insert("platform", "Alpha Native (WebView2 / WRY)")
-    info.insert("engine_version", "0.1.0")
-    info.insert("working_dir", env.current)
-    info.insert("timestamp_ms", time.now_ms())
+    info.insert("engine_version", "0.2.0")
+    info.insert("working_dir", std.env.current)
+    info.insert("timestamp_ms", std.time.now_ms())
     return info
 }
 
@@ -47,12 +44,12 @@ function handle_system_info(args: map<string, something>) [here, map<string, som
 // 2. Event Handler (triggered from JS via window.webalph.emit)
 // ----------------------------------------------------------------------------
 function handle_ping(payload: something) [here, nothing] {
-    printf("[Alpha] Received 'ping' event from frontend: {}\n", json.stringify(payload))
+    std.printf("[Alpha] Received 'ping' event from frontend: {}\n", std.json.stringify(payload))
 
     // Prepare response "pong" event payload for frontend
     var response: map<string, something> = map.new()
     response.insert("message", "Pong response signal from Alpha!")
-    response.insert("server_time", time.now_ms())
+    response.insert("server_time", std.time.now_ms())
 
     // Emit event to frontend (caught in JS via window.webalph.listen("pong", ...))
     emit_event("pong", response)
@@ -61,8 +58,8 @@ function handle_ping(payload: something) [here, nothing] {
 // ----------------------------------------------------------------------------
 // 3. Entry Point: Application setup and launch
 // ----------------------------------------------------------------------------
-function main() [here, nothing] {
-    printf("[WebAlph] Starting desktop application...\n")
+function main() [public, nothing] {
+    std.println("[WebAlph] Starting desktop application...")
 
     // Step 1: Configure window (Title, Width, Height, Path to HTML file)
     var app: App = App.new("WebAlph Demo App", 980, 700, "ui/index.html")
@@ -79,5 +76,5 @@ function main() [here, nothing] {
     // (Code after app.run() executes only when the window is closed)
     app.run()
 
-    printf("[WebAlph] Window closed. Application terminated.\n")
+    std.println("[WebAlph] Window closed. Application terminated.")
 }

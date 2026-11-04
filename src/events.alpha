@@ -1,11 +1,9 @@
 // WebAlph: Event Bus Module
 // Manages bi-directional event dispatching between Alpha backend and web frontend.
 
-import Core/Basic.alpha
-import Core/Json.alpha
-import Core/Webview.alpha
+const var std = @import("std")
 
-var event_listeners: map<string, something> = map.new()
+public var event_listeners: map<string, something> = map.new()
 
 function on_event(event_name: string, handler: something) [public, nothing] {
     event_listeners.insert(event_name, handler)
@@ -23,7 +21,7 @@ function trigger_event(event_name: string, payload: something) [public, nothing]
 }
 
 function emit_event(event_name: string, payload: something) [public, nothing] {
-    var payload_json: string = json.stringify(payload)
-    var script: string = format("window.__webalph_dispatch('{}', {});", event_name, payload_json)
-    Webview.eval(script)
+    var payload_json: string = std.json.stringify(payload)
+    var script: string = std.format("window.__webalph_dispatch('{}', {});", event_name, payload_json)
+    std.webview.eval(script)
 }

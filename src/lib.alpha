@@ -1,9 +1,8 @@
 // WebAlph Library: Root Module
-// Tauri-like native desktop GUI framework for the Alpha programming language.
+// Modern desktop GUI framework for the Alpha programming language powered by Webview2/WRY.
 
-import Core/Basic.alpha
-import Core/Json.alpha
-import Core/Webview.alpha
+const var std = @import("std")
+
 import window.alpha
 import events.alpha
 import ipc.alpha
